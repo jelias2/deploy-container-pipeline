@@ -68,23 +68,26 @@ node('master') {
 
 
         stage('Wait for NLB to be active'){
-         timeout(5) {
-              waitUntil {
-                     def active = "active"
-                     def nlb_status = sh( script: """aws elbv2 describe-load-balancers \
-                                          --region us-west-2 \
-                                          --name my-load-balancer3  \
-                                          | jq '.LoadBalancers[].State.Code' """,
-                                          returnStdout: true ).trim()
-
-                     echo("NLB_STATUS: " + nlb_status)
-                     if ( nlb_status.equalsIgnoreCase( active ) ){
-                          return true;
-                     } else {
-                          return false;
-                     }
-                }
-            }
+          //MVP, just wait 4 min
+          sleep 240
+         // timeout(5) {
+         //      waitUntil {
+         //             def active = "active"
+         //             def nlb_status = sh( script: """aws elbv2 describe-load-balancers \
+         //                                  --region us-west-2 \
+         //                                  --name my-load-balancer3  \
+         //                                  | jq '.LoadBalancers[].State.Code' """,
+         //                                  returnStdout: true ).trim()
+         //
+         //             echo("NLB_STATUS: " + nlb_status)
+         //             echo("Active: " + active)
+         //             if ( nlb_status.equalsIgnoreCase( active ) ){
+         //                  return true;
+         //             } else {
+         //                  return false;
+         //             }
+         //        }
+         //    }
         }
 
 
