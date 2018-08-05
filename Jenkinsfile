@@ -69,17 +69,21 @@ node('master') {
 
         stage('Wait for NLB to be active'){
          timeout(5) {
-                waitUntil {
-
-                     NLB_STATUS = sh( script: """aws elbv2 describe-load-balancers \
+              waitUntil {
+                     def active = "active"
+                     def nlb_status = sh( script: """aws elbv2 describe-load-balancers \
                                           --region us-west-2 \
                                           --name my-load-balancer3  \
-                                          | jq '.LoadBalancers[].State.Code' """, returnStdout: true ).trim()
+                                          | jq '.LoadBalancers[].State.Code' """,
+                                          returnStdout: true ).trim()
+
                      echo("NLB_STATUS: ${NLB_STATUS}")
-                     if ( NLB_STATUS == "active"){
-                          return true
+                     if ( nlb_status.equalsIgnoreCase( active ) ){
+                          return true;
+                     } else {
+                          return false;
                      }
-                   }
+                }
             }
         }
 
