@@ -62,7 +62,7 @@ node('master') {
           script: """aws apigateway create-vpc-link \
                   --name vpc-link-1
                   --region us-west-2
-                  --target-arns ${LOAD_BALANCER_ARN}  | jq '.id' """
+                  --target-arns ${LOAD_BALANCER_ARN}  | jq '.id' """,
           returnStdout: true
           ).trim()
           echo "VPC_LINK_ID: ${VPC_LINK_ID}"
