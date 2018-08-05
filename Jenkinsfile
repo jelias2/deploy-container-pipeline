@@ -69,7 +69,7 @@ node('master') {
 
         }
 
-        stage('Wait for NLB to be active')
+        stage('Wait for NLB to be active'){
          timeout(5) {
                 waitUntil {
                    script {
@@ -78,7 +78,7 @@ node('master') {
                    }
                 }
             }
-
+        }
 
         stage('Create Listener'){
           sh """aws elbv2 create-listener \
