@@ -69,7 +69,7 @@ node('master') {
 
         stage('Wait for NLB to be active'){
           //MVP, just wait 4 min
-          sleep 240
+          sleep 180
          // timeout(5) {
          //      waitUntil {
          //             def active = "active"
@@ -114,6 +114,54 @@ node('master') {
                     --launch-type "FARGATE" \
                     --load-balancers targetGroupArn=${TARGET_GROUP_ARN},containerName=jacob_personal,containerPort=443 \
                     --network-configuration awsvpcConfiguration="{subnets=[subnet-d764cb9e],securityGroups=[sg-b3efdfcb],assignPublicIp="ENABLED"}" """
+
+        }
+
+
+        stage('Create API-Gateway Resources'){
+
+          API_GATEWAY_RES_1 = sh (
+          script: """aws apigateway create-resource
+                    --region us-west-2
+                    --rest-api-id h8hm94mesa
+                    --parent-id vlan6wcwxh
+                    --path-part v1 | jq '.id' """,
+          returnStdout: true
+          ).trim()
+          echo "API_GATEWAY_RES_1: ${API_GATEWAY_RES_1}"
+
+
+          API_GATEWAY_PROXY_RES = sh (
+          script: """aws apigateway create-resource  \
+              --region us-west-2 \
+              --rest-api-id h8hm94mesa \
+              --parent-id ${API_GATEWAY_RES_1} \
+              --path-part {proxy+} | jq '.id' """,
+          returnStdout: true
+          ).trim()
+          echo "API_GATEWAY_PROXY_RES: ${API_GATEWAY_PROXY_RES}"
+
+          //CREATES THE ANY METHOD
+          sh """aws apigateway put-method \
+              --region us-west-2 \
+              --rest-api-id h8hm94mesa \
+              --resource-id ${API_GATEWAY_PROXY_RES} \
+              --http-method ANY \
+              --authorization-type "NONE" """
+
+
+        //Create the proxy integration
+        sh """  aws apigateway put-integration \
+                --rest-api-id h8hm94mesa \
+                --resource-id ${API_GATEWAY_PROXY_RES} \
+                --uri 'http://myApi.example.com/v1' \
+                --http-method ANY \
+                --type HTTP_PROXY \
+                --integration-http-method ANY \
+                --connection-type VPC_LINK \
+                --connection-id ${VPC_LINK_ID} """
+
+
 
         }
 
