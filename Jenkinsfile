@@ -10,6 +10,7 @@ node('master') {
 
       def LOAD_BALANCER_ARN = ''
       def TARGET_GROUP_ARN  = ''
+      def VPC_LINK_ID       = ''
 
       stage ('Clone') {
       	checkout scm
@@ -59,9 +60,9 @@ node('master') {
         stage('Create VPC Link'){
           VPC_LINK_ID = sh (
           script: """aws apigateway create-vpc-link \
-                  --name vpc-link-3
+                  --name vpc-link-1
                   --region us-west-2
-                  --target-arns ${TARGET_GROUP_ARN}  | jq '.id' """
+                  --target-arns ${LOAD_BALANCER_ARN}  | jq '.id' """
           returnStdout: true
           ).trim()
           echo "VPC_LINK_ID: ${VPC_LINK_ID}"
