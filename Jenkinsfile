@@ -74,9 +74,11 @@ node('master') {
                      NLB_STATUS = sh( script: """aws elbv2 describe-load-balancers \
                                           --region us-west-2 \
                                           --name my-load-balancer3  \
-                                          | jq '.LoadBalancers[].State.Code' """, returnStdout: true )
+                                          | jq '.LoadBalancers[].State.Code' """, returnStdout: true ).trim()
                      echo("NLB_STATUS: ${NLB_STATUS}")
-                     return ( NLB_STATUS == "active");
+                     if ( NLB_STATUS == "active"){
+                          return true
+                     }
                    }
             }
         }
