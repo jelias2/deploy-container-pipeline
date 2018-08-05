@@ -121,10 +121,10 @@ node('master') {
         stage('Create API-Gateway Resources'){
 
           API_GATEWAY_RES_1 = sh (
-          script: """aws apigateway create-resource
-                    --region us-west-2
-                    --rest-api-id h8hm94mesa
-                    --parent-id vlan6wcwxh
+          script: """aws apigateway create-resource \
+                    --region us-west-2 \
+                    --rest-api-id h8hm94mesa \
+                    --parent-id vlan6wcwxh \
                     --path-part v1 | jq '.id' """,
           returnStdout: true
           ).trim()
