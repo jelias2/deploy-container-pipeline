@@ -57,17 +57,15 @@ node('master') {
 
         }
 
-        stage('Create VPC Link'){
-          VPC_LINK_ID = sh (
-          script: """aws apigateway create-vpc-link \
-                  --name vpc-link-1 \
-                  --region us-west-2 \
-                  --target-arns ${LOAD_BALANCER_ARN}  | jq '.id' """,
-          returnStdout: true
-          ).trim()
-          echo "VPC_LINK_ID: ${VPC_LINK_ID}"
-
+        stage('Create Listener'){
+          sh """aws elbv2 create-listener \
+                --region us-west-2 \
+                --load-balancer-arn ${LOAD_BALANCER_ARN} \
+                --protocol TCP \
+                --port 443 \
+                --default-actions Type=forward,TargetGroupArn=${TARGET_GROUP_ARN}"""
         }
+
 
         stage('Wait for NLB to be active'){
          timeout(5) {
@@ -78,19 +76,23 @@ node('master') {
                                           --name my-load-balancer3  \
                                           | jq '.LoadBalancers[].State.Code' """, returnStdout: true )
                      echo("NLB_STATUS: ${NLB_STATUS}")
-                     return ( ${NLB_STATUS} == "active");
+                     return ( NLB_STATUS == "active");
                    }
-
             }
         }
 
-        stage('Create Listener'){
-          sh """aws elbv2 create-listener \
-                --region us-west-2 \
-                --load-balancer-arn ${LOAD_BALANCER_ARN} \
-                --protocol TCP \
-                --port 443 \
-                --default-actions Type=forward,TargetGroupArn=${TARGET_GROUP_ARN}"""
+
+
+        stage('Create VPC Link'){
+          VPC_LINK_ID = sh (
+          script: """aws apigateway create-vpc-link \
+                  --name vpc-link-1 \
+                  --region us-west-2 \
+                  --target-arns ${LOAD_BALANCER_ARN}  | jq '.id' """,
+          returnStdout: true
+          ).trim()
+          echo "VPC_LINK_ID: ${VPC_LINK_ID}"
+
         }
 
         stage('Create service'){
