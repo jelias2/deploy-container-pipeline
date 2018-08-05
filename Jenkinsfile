@@ -73,10 +73,11 @@ node('master') {
          timeout(5) {
                 waitUntil {
                    script {
-                     def r = sh script: """aws elbv2 describe-load-balancers \
+                     def r = sh( script: """aws elbv2 describe-load-balancers \
                                           --region us-west-2 \
                                           --name my-load-balancer3  \
-                                          | jq '.LoadBalancers[].State.Code' """, returnStatus: true
+                                          | jq '.LoadBalancers[].State.Code' """, returnStatus: true )
+                     echo("R: ${r}")                    
                      return (r == "active");
                    }
                 }
