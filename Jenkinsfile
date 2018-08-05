@@ -28,7 +28,7 @@ node('master') {
                 TARGET_GROUP_ARN = sh (
                 script: " aws elbv2 create-target-group \
                         --region us-west-2 \
-                        --name target-group-2 \
+                        --name target-group-3 \
                         --target-type ip \
                         --protocol TCP \
                         --port 443 \
@@ -44,7 +44,7 @@ node('master') {
 
           LOAD_BALANCER_ARN = sh (
           script: "aws elbv2 create-load-balancer \
-              --name my-load-balancer3 \
+              --name my-load-balancer-4 \
               --type network  \
               --scheme internal \
               --region us-west-2 \
@@ -108,7 +108,7 @@ node('master') {
 
             sh """aws ecs create-service --cluster fargate-cluster \
                     --region us-west-2 \
-                    --service-name fargate-service \
+                    --service-name fargate-service-4 \
                     --task-definition first-run-task-definition:2 \
                     --desired-count 1 \
                     --launch-type "FARGATE" \
@@ -152,6 +152,7 @@ node('master') {
 
         //Create the proxy integration
         sh """  aws apigateway put-integration \
+                --region us-west-2
                 --rest-api-id h8hm94mesa \
                 --resource-id ${API_GATEWAY_PROXY_RES} \
                 --uri 'http://myApi.example.com/v1' \
