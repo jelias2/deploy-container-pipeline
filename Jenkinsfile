@@ -56,6 +56,19 @@ node('master') {
 
         }
 
+        stage('Create VPC Link'){
+          VPC_LINK_ID = sh (
+          script: """aws apigateway create-vpc-link \
+                  --name vpc-link-3
+                  --region us-west-2
+                  --target-arns ${TARGET_GROUP_ARN}  | jq '.id' """
+          returnStdout: true
+          ).trim()
+          echo "VPC_LINK_ID: ${VPC_LINK_ID}"
+        }
+
+
+
         stage('Create Listener'){
           sh """aws elbv2 create-listener \
                 --region us-west-2 \
@@ -77,6 +90,7 @@ node('master') {
                     --network-configuration awsvpcConfiguration="{subnets=[subnet-d764cb9e],securityGroups=[sg-b3efdfcb],assignPublicIp="ENABLED"}" """
 
         }
+
 
     }
 }
