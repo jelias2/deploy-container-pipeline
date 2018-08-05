@@ -77,7 +77,7 @@ node('master') {
                                           | jq '.LoadBalancers[].State.Code' """,
                                           returnStdout: true ).trim()
 
-                     echo("NLB_STATUS: ${NLB_STATUS}")
+                     echo("NLB_STATUS: " + nlb_status)
                      if ( nlb_status.equalsIgnoreCase( active ) ){
                           return true;
                      } else {
