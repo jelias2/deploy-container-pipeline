@@ -66,8 +66,18 @@ node('master') {
           returnStdout: true
           ).trim()
           echo "VPC_LINK_ID: ${VPC_LINK_ID}"
+
         }
 
+        stage('Wait for NLB to be active')
+         timeout(5) {
+                waitUntil {
+                   script {
+                     def r = sh script: """aws elbv2 describe-load-balancers --name my-load-balancer3 | jq '.LoadBalancers[].State.Code' """, returnStatus: true
+                     return (r == "active");
+                   }
+                }
+            }
 
 
         stage('Create Listener'){
