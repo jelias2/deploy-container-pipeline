@@ -29,7 +29,7 @@ node('master') {
                 TARGET_GROUP_ARN = sh (
                 script: " aws elbv2 create-target-group \
                         --region us-west-2 \
-                        --name target-group-5 \
+                        --name target-group-6 \
                         --target-type ip \
                         --protocol TCP \
                         --port 443 \
@@ -45,7 +45,7 @@ node('master') {
 
           LOAD_BALANCER_ARN = sh (
           script: "aws elbv2 create-load-balancer \
-              --name my-load-balancer-6 \
+              --name my-load-balancer-7 \
               --type network  \
               --scheme internal \
               --region us-west-2 \
@@ -119,7 +119,7 @@ node('master') {
 
             sh """aws ecs create-service --cluster fargate-cluster \
                     --region us-west-2 \
-                    --service-name fargate-service-6 \
+                    --service-name fargate-service-7 \
                     --task-definition first-run-task-definition:2 \
                     --desired-count 1 \
                     --launch-type "FARGATE" \
@@ -184,7 +184,7 @@ node('master') {
                 --type HTTP_PROXY \
                 --integration-http-method ANY \
                 --connection-type VPC_LINK \
-                --connection-id "\${stageVariables.vpcLinkId}"""
+                --connection-id "\${stageVariables.vpcLinkId}" """
 
 
         sh   """aws apigateway update-integration \
