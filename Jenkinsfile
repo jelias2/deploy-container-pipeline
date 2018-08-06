@@ -152,6 +152,7 @@ node('master') {
           ).trim()
           echo "API_GATEWAY_PROXY_RES: ${API_GATEWAY_PROXY_RES}"
 
+
           //CREATES THE ANY METHOD
           sh """aws apigateway put-method \
               --region us-west-2 \
@@ -161,24 +162,45 @@ node('master') {
               --authorization-type "NONE" """
 
 
-        //Create the proxy integration
+
+      //  Create the proxy integration
+        // sh """  aws apigateway put-integration \
+        //         --region us-west-2 \
+        //         --rest-api-id h8hm94mesa \
+        //         --resource-id ${API_GATEWAY_PROXY_RES} \
+        //         --uri 'http://myApi.example.com/v1' \
+        //         --http-method ANY \
+        //         --type HTTP_PROXY \
+        //         --integration-http-method ANY \
+        //         --connection-type VPC_LINK \
+        //         --connection-id ${VPC_LINK_ID} """
+
         sh """  aws apigateway put-integration \
-                --region us-west-2 \
+                --region us-west-2
                 --rest-api-id h8hm94mesa \
                 --resource-id ${API_GATEWAY_PROXY_RES} \
-                --uri 'http://myApi.example.com/v1' \
+                --uri 'http://myApi.example.com/v1/' \
                 --http-method ANY \
                 --type HTTP_PROXY \
                 --integration-http-method ANY \
                 --connection-type VPC_LINK \
-                --connection-id "\${stageVariables.vpcLinkId}" """
+                --connection-id "\${stageVariables.vpcLinkId}"""
 
 
-        sh """  aws apigateway create-deployment \
-                --region us-west-2 \
-                --rest-api-id h8hm94mesa \
-                --stage-name dev \
-                --variables vpcLinkId=${LOAD_BALANCER_DNS}"""
+        sh   """aws apigateway update-integration \
+             --region us-west-2
+             --rest-api-id h8hm94mesa \
+             --resource-id ${API_GATEWAY_PROXY_RES} \
+             --http-method ANY \
+             --patch-operations '[{"op":"replace","path":"/connectionId","value":"${stageVariables.vpcLinkId}"}]'  """
+
+
+       sh """aws apigateway create-deployment \
+            --region us-west-2
+            --rest-api-id h8hm94mesa \
+            --stage-name dev \
+            --variables vpcLinkId=${VPC_LINK_ID}"""
+
 
         }
     }
