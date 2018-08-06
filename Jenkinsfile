@@ -29,7 +29,7 @@ node('master') {
                 TARGET_GROUP_ARN = sh (
                 script: " aws elbv2 create-target-group \
                         --region us-west-2 \
-                        --name target-group-4 \
+                        --name target-group-5 \
                         --target-type ip \
                         --protocol TCP \
                         --port 443 \
@@ -45,7 +45,7 @@ node('master') {
 
           LOAD_BALANCER_ARN = sh (
           script: "aws elbv2 create-load-balancer \
-              --name my-load-balancer-5 \
+              --name my-load-balancer-6 \
               --type network  \
               --scheme internal \
               --region us-west-2 \
@@ -119,7 +119,7 @@ node('master') {
 
             sh """aws ecs create-service --cluster fargate-cluster \
                     --region us-west-2 \
-                    --service-name fargate-service-4 \
+                    --service-name fargate-service-6 \
                     --task-definition first-run-task-definition:2 \
                     --desired-count 1 \
                     --launch-type "FARGATE" \
@@ -176,7 +176,7 @@ node('master') {
         //         --connection-id ${VPC_LINK_ID} """
 
         sh """  aws apigateway put-integration \
-                --region us-west-2
+                --region us-west-2 \
                 --rest-api-id h8hm94mesa \
                 --resource-id ${API_GATEWAY_PROXY_RES} \
                 --uri 'http://myApi.example.com/v1/' \
@@ -188,7 +188,7 @@ node('master') {
 
 
         sh   """aws apigateway update-integration \
-             --region us-west-2
+             --region us-west-2 \
              --rest-api-id h8hm94mesa \
              --resource-id ${API_GATEWAY_PROXY_RES} \
              --http-method ANY \
@@ -196,7 +196,7 @@ node('master') {
 
 
        sh """aws apigateway create-deployment \
-            --region us-west-2
+            --region us-west-2 \
             --rest-api-id h8hm94mesa \
             --stage-name dev \
             --variables vpcLinkId=${VPC_LINK_ID}"""
