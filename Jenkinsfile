@@ -163,18 +163,6 @@ node('master') {
 
 
 
-      //  Create the proxy integration
-        // sh """  aws apigateway put-integration \
-        //         --region us-west-2 \
-        //         --rest-api-id h8hm94mesa \
-        //         --resource-id ${API_GATEWAY_PROXY_RES} \
-        //         --uri 'http://myApi.example.com/v1' \
-        //         --http-method ANY \
-        //         --type HTTP_PROXY \
-        //         --integration-http-method ANY \
-        //         --connection-type VPC_LINK \
-        //         --connection-id ${VPC_LINK_ID} """
-
         // sh """  aws apigateway put-integration \
         //         --region us-west-2 \
         //         --rest-api-id h8hm94mesa \
@@ -186,23 +174,19 @@ node('master') {
         //         --connection-type VPC_LINK \
         //         --connection-id \${stageVariables.vpcLinkId} """
 
-
-              //  aws apigateway put-integration --region us-west-2 --rest-api-id h8hm94mesa --resource-id hccweh --uri 'http://myApi.example.com/v1' --http-method GET --type HTTP_PROXY --integration-http-method GET --connection-type VPC_LINK --connection-id "\${stageVariables.vpcLinkId}"
-
-                //THIS WORKED!!
-                //aws apigateway put-integration --region us-west-2 --rest-api-id h8hm94mesa --resource-id hccweh --uri 'http://myApi.example.com/v1' --http-method GET --type HTTP_PROXY --integration-http-method GET --connection-type VPC_LINK --connection-id "\${stageVariables.vpcLinkId}"
-                ///
+        //THIS WORKED!!
+        //sh """ aws apigateway put-integration --region us-west-2 --rest-api-id h8hm94mesa --resource-id ${API_GATEWAY_PROXY_RES} --uri 'http://myApi.example.com/v1' --http-method GET --type HTTP_PROXY --integration-http-method GET --connection-type VPC_LINK --connection-id "\${stageVariables.vpcLinkId}" """
 
 
-        sh """ aws apigateway put-integration --region us-west-2 --rest-api-id h8hm94mesa --resource-id ${API_GATEWAY_PROXY_RES} --uri 'http://myApi.example.com/v1' --http-method GET --type HTTP_PROXY --integration-http-method GET --connection-type VPC_LINK --connection-id "\${stageVariables.vpcLinkId}" """
+         //DONT THINK I NEED This
+        // sh   """aws apigateway update-integration \
+        //      --region us-west-2 \
+        //      --rest-api-id h8hm94mesa \
+        //      --resource-id ${API_GATEWAY_PROXY_RES} \
+        //      --http-method GET \
+        //      --patch-operations '[{"op":"replace","path":"/connectionId","value":"${stageVariables.vpcLinkId}"}]'  """
 
-
-        sh   """aws apigateway update-integration \
-             --region us-west-2 \
-             --rest-api-id h8hm94mesa \
-             --resource-id ${API_GATEWAY_PROXY_RES} \
-             --http-method GET \
-             --patch-operations '[{"op":"replace","path":"/connectionId","value":"${stageVariables.vpcLinkId}"}]'  """
+        //aws apigateway update-integration --region us-west-2 --rest-api-id h8hm94mesa --resource-id 0v8zp9 --http-method GET --patch-operations '[{"op":"replace","path":"/connectionId","value":"${stageVariables.vpcLinkId}"}]'  """
 
 
        sh """aws apigateway create-deployment \
@@ -211,6 +195,7 @@ node('master') {
             --stage-name dev \
             --variables vpcLinkId=${VPC_LINK_ID}"""
 
+          //aws apigateway create-deployment --region us-west-2 --rest-api-id h8hm94mesa --stage-name dev --variables vpcLinkId=98h6f8
 
         }
     }
