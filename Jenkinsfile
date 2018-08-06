@@ -29,7 +29,7 @@ node('master') {
                 TARGET_GROUP_ARN = sh (
                 script: " aws elbv2 create-target-group \
                         --region us-west-2 \
-                        --name target-group-3 \
+                        --name target-group-4 \
                         --target-type ip \
                         --protocol TCP \
                         --port 443 \
@@ -45,7 +45,7 @@ node('master') {
 
           LOAD_BALANCER_ARN = sh (
           script: "aws elbv2 create-load-balancer \
-              --name my-load-balancer-4 \
+              --name my-load-balancer-5 \
               --type network  \
               --scheme internal \
               --region us-west-2 \
@@ -106,7 +106,7 @@ node('master') {
         stage('Create VPC Link'){
           VPC_LINK_ID = sh (
           script: """aws apigateway create-vpc-link \
-                  --name vpc-link-1 \
+                  --name vpc-link-2 \
                   --region us-west-2 \
                   --target-arns ${LOAD_BALANCER_ARN}  | jq '.id' """,
           returnStdout: true
@@ -161,14 +161,6 @@ node('master') {
               --authorization-type "NONE" """
 
 
-          sh """  aws apigateway create-stage \
-                  --region us-west-2 \
-                  --rest-api-id h8hm94mesa \
-                  --stage-name dev \
-                  --deployment-id sample-deploy \
-                  --variables vpcLinkId=${LOAD_BALANCER_DNS}"""
-
-
         //Create the proxy integration
         sh """  aws apigateway put-integration \
                 --region us-west-2 \
@@ -180,6 +172,13 @@ node('master') {
                 --integration-http-method ANY \
                 --connection-type VPC_LINK \
                 --connection-id "\${stageVariables.vpcLinkId}" """
+
+
+        sh """  aws apigateway create-deployment \
+                --region us-west-2 \
+                --rest-api-id h8hm94mesa \
+                --stage-name dev \
+                --variables vpcLinkId=${LOAD_BALANCER_DNS}"""
 
         }
     }
