@@ -11,6 +11,7 @@ node('master') {
       def LOAD_BALANCER_ARN = ''
       def TARGET_GROUP_ARN  = ''
       def VPC_LINK_ID       = ''
+      def LOAD_BALANCER_DNS = ''
 
       stage ('Clone') {
       	checkout scm
@@ -53,6 +54,16 @@ node('master') {
           returnStdout: true
           ).trim()
           echo "Load Balancer Arn: ${LOAD_BALANCER_ARN}"
+
+
+          LOAD_BALANCER_DNS = sh(
+          script: """aws elbv2 describe-load-balancers \
+                  --region us-west-2 \
+                  --load-balancer-arns ${LOAD_BALANCER_ARN} \
+                   | jq '.LoadBalancers[].DNSName'""",
+                   returnStdout: true
+                   ).trim()
+                   echo "Load Balancer DNS Name: ${LOAD_BALANCER_DNS}"
 
 
         }
@@ -150,9 +161,17 @@ node('master') {
               --authorization-type "NONE" """
 
 
+          sh """  aws apigateway create-stage \
+                  --region us-west-2 \
+                  --rest-api-id h8hm94mesa \
+                  --stage-name dev \
+                  --deployment-id sample-deploy \
+                  --variables vpcLinkId=${LOAD_BALANCER_DNS}"""
+
+
         //Create the proxy integration
         sh """  aws apigateway put-integration \
-                --region us-west-2
+                --region us-west-2 \
                 --rest-api-id h8hm94mesa \
                 --resource-id ${API_GATEWAY_PROXY_RES} \
                 --uri 'http://myApi.example.com/v1' \
@@ -160,12 +179,8 @@ node('master') {
                 --type HTTP_PROXY \
                 --integration-http-method ANY \
                 --connection-type VPC_LINK \
-                --connection-id ${VPC_LINK_ID} """
-
-
+                --connection-id "\${stageVariables.vpcLinkId}" """
 
         }
-
-
     }
 }
