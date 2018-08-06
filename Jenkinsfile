@@ -29,7 +29,7 @@ node('master') {
                 TARGET_GROUP_ARN = sh (
                 script: " aws elbv2 create-target-group \
                         --region us-west-2 \
-                        --name target-group-7 \
+                        --name target-group-8 \
                         --target-type ip \
                         --protocol TCP \
                         --port 443 \
@@ -45,7 +45,7 @@ node('master') {
 
           LOAD_BALANCER_ARN = sh (
           script: "aws elbv2 create-load-balancer \
-              --name my-load-balancer-8 \
+              --name my-load-balancer-9 \
               --type network  \
               --scheme internal \
               --region us-west-2 \
@@ -106,7 +106,7 @@ node('master') {
         stage('Create VPC Link'){
           VPC_LINK_ID = sh (
           script: """aws apigateway create-vpc-link \
-                  --name vpc-link-2 \
+                  --name vpc-link-5 \
                   --region us-west-2 \
                   --target-arns ${LOAD_BALANCER_ARN}  | jq '.id' """,
           returnStdout: true
@@ -119,7 +119,7 @@ node('master') {
 
             sh """aws ecs create-service --cluster fargate-cluster \
                     --region us-west-2 \
-                    --service-name fargate-service-8 \
+                    --service-name fargate-service-9 \
                     --task-definition first-run-task-definition:2 \
                     --desired-count 1 \
                     --launch-type "FARGATE" \
@@ -179,7 +179,7 @@ node('master') {
                 --region us-west-2 \
                 --rest-api-id h8hm94mesa \
                 --resource-id ${API_GATEWAY_PROXY_RES} \
-                --uri 'http://myApi.example.com/v1/' \
+                --uri 'http://myApi.example.com/v1' \
                 --http-method GET \
                 --type HTTP_PROXY \
                 --integration-http-method GET \
