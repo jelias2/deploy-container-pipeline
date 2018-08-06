@@ -29,7 +29,7 @@ node('master') {
                 TARGET_GROUP_ARN = sh (
                 script: " aws elbv2 create-target-group \
                         --region us-west-2 \
-                        --name target-group-6 \
+                        --name target-group-7 \
                         --target-type ip \
                         --protocol TCP \
                         --port 443 \
@@ -45,7 +45,7 @@ node('master') {
 
           LOAD_BALANCER_ARN = sh (
           script: "aws elbv2 create-load-balancer \
-              --name my-load-balancer-7 \
+              --name my-load-balancer-8 \
               --type network  \
               --scheme internal \
               --region us-west-2 \
@@ -119,7 +119,7 @@ node('master') {
 
             sh """aws ecs create-service --cluster fargate-cluster \
                     --region us-west-2 \
-                    --service-name fargate-service-7 \
+                    --service-name fargate-service-8 \
                     --task-definition first-run-task-definition:2 \
                     --desired-count 1 \
                     --launch-type "FARGATE" \
@@ -158,7 +158,7 @@ node('master') {
               --region us-west-2 \
               --rest-api-id h8hm94mesa \
               --resource-id ${API_GATEWAY_PROXY_RES} \
-              --http-method ANY \
+              --http-method GET \
               --authorization-type "NONE" """
 
 
@@ -180,9 +180,9 @@ node('master') {
                 --rest-api-id h8hm94mesa \
                 --resource-id ${API_GATEWAY_PROXY_RES} \
                 --uri 'http://myApi.example.com/v1/' \
-                --http-method ANY \
+                --http-method GET \
                 --type HTTP_PROXY \
-                --integration-http-method ANY \
+                --integration-http-method GET \
                 --connection-type VPC_LINK \
                 --connection-id "\${stageVariables.vpcLinkId}" """
 
@@ -191,7 +191,7 @@ node('master') {
              --region us-west-2 \
              --rest-api-id h8hm94mesa \
              --resource-id ${API_GATEWAY_PROXY_RES} \
-             --http-method ANY \
+             --http-method GET \
              --patch-operations '[{"op":"replace","path":"/connectionId","value":"${stageVariables.vpcLinkId}"}]'  """
 
 
