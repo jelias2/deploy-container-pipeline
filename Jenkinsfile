@@ -80,7 +80,7 @@ node('master') {
 
         stage('Wait for NLB to be active'){
           //MVP, just wait 4 min
-          sleep 180
+          sleep 150
          // timeout(5) {
          //      waitUntil {
          //             def active = "active"
