@@ -175,16 +175,26 @@ node('master') {
         //         --connection-type VPC_LINK \
         //         --connection-id ${VPC_LINK_ID} """
 
-        sh """  aws apigateway put-integration \
-                --region us-west-2 \
-                --rest-api-id h8hm94mesa \
-                --resource-id ${API_GATEWAY_PROXY_RES} \
-                --uri 'http://myApi.example.com/v1' \
-                --http-method GET \
-                --type HTTP_PROXY \
-                --integration-http-method GET \
-                --connection-type VPC_LINK \
-                --connection-id "\${stageVariables.vpcLinkId}" """
+        // sh """  aws apigateway put-integration \
+        //         --region us-west-2 \
+        //         --rest-api-id h8hm94mesa \
+        //         --resource-id ${API_GATEWAY_PROXY_RES} \
+        //         --uri 'http://myApi.example.com/v1' \
+        //         --http-method GET \
+        //         --type HTTP_PROXY \
+        //         --integration-http-method GET \
+        //         --connection-type VPC_LINK \
+        //         --connection-id \${stageVariables.vpcLinkId} """
+
+
+              //  aws apigateway put-integration --region us-west-2 --rest-api-id h8hm94mesa --resource-id hccweh --uri 'http://myApi.example.com/v1' --http-method GET --type HTTP_PROXY --integration-http-method GET --connection-type VPC_LINK --connection-id "\${stageVariables.vpcLinkId}"
+
+                //THIS WORKED!!
+                //aws apigateway put-integration --region us-west-2 --rest-api-id h8hm94mesa --resource-id hccweh --uri 'http://myApi.example.com/v1' --http-method GET --type HTTP_PROXY --integration-http-method GET --connection-type VPC_LINK --connection-id "\${stageVariables.vpcLinkId}"
+                ///
+
+
+        sh """ aws apigateway put-integration --region us-west-2 --rest-api-id h8hm94mesa --resource-id hccweh --uri 'http://myApi.example.com/v1' --http-method GET --type HTTP_PROXY --integration-http-method GET --connection-type VPC_LINK --connection-id "\${stageVariables.vpcLinkId}" """
 
 
         sh   """aws apigateway update-integration \
